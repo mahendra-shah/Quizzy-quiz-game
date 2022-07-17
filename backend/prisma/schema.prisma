@@ -1,0 +1,64 @@
+// This is your Prisma schema file,git@github.com:mahendra-shah/Quiz-game-backend.git
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  GAMER
+}
+
+model Gamers {
+  id        Int          @id @default(autoincrement())
+  role      Role         @default(GAMER)
+  name      String       @db.VarChar(55)
+  age       String
+  email     String       @unique
+  password  String
+  Questions Questions[]
+  Score     ScoreBoard[]
+
+}
+
+model ScoreBoard {
+  id       Int      @id @default(autoincrement())
+  category Category @default(JAVASCRIPT)
+  gamer    Gamers   @relation(fields: [gamerId], references: [id])
+  gamerId  Int
+  score    String?
+
+}
+
+enum Category {
+  JAVASCRIPT
+  REACT
+  NODE
+}
+
+enum Correct {
+  A
+  B
+  C
+  D
+}
+
+model Questions {
+  id       Int      @id @default(autoincrement())
+  category Category
+  admin    Gamers   @relation(fields: [gamerId], references: [id])
+  gamerId  Int
+  question String   @db.Text
+  A        String   @db.Text
+  B        String   @db.Text
+  C        String   @db.Text
+  D        String   @db.Text
+  correct  Correct
+
+}
